@@ -1,0 +1,28 @@
+CREATE DATABASE IF NOT EXISTS ea3_conexiones;
+
+USE ea3_conexiones;
+
+___________________
+
+SHOW DATABASES;
+
+SELECT USER(), CURRENT_USER(), VERSION();
+
+SHOW DATABASES;
+
+___________________________________________
+
+CREATE USER IF NOT EXISTS 'ea3_app'@'localhost'
+IDENTIFIED BY 'MiClaveEA3_2026!';
+
+ALTER USER 'ea3_app'@'localhost'
+IDENTIFIED BY 'MiClaveEA3_2026!';
+
+GRANT ALL PRIVILEGES ON ea3_conexiones.*
+TO 'ea3_app'@'localhost';
+
+
+
+SELECT user, host
+FROM mysql.user
+WHERE user = 'ea3_app';

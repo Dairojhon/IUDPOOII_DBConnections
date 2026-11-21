@@ -4,97 +4,119 @@ import java.awt.*;
 
 public class VentanaPrincipal extends JFrame {
 
-        Panel panel = new Panel();
-        JLabel lblUrl = new JLabel("URL Conexion:");
-        private final JTextField txtUrl = new JTextField(25);
-        JLabel lblUser = new JLabel("Nombre de usuario");
-        private final JTextField txtuser = new JTextField(25);
-        JLabel lblPassword = new JLabel("Nombre de usuario");
-        private final JTextField txtPassword = new JTextField(15);    
-        private final JButton btnConnection = new JButton("Conectar");
-        private final JTextArea txtResultsArea=new JTextArea(8, 40);
+    // Paneles
+    private final JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
+    private final JPanel panelFormulario = new JPanel(new GridLayout(3, 2, 10, 10));
+    private final JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-    public VentanaPrincipal(){
+    // Etiquetas
+    private final JLabel lblUrl = new JLabel("URL de conexion:");
+    private final JLabel lblUser = new JLabel("Nombre de usuario:");
+    private final JLabel lblPassword = new JLabel("Contrasena:");
+
+    // Campos de texto
+    private final JTextField txtUrl = new JTextField(25);
+    private final JTextField txtUser = new JTextField(25);
+    private final JPasswordField txtPassword = new JPasswordField(25);
+
+    // Botones y resultados
+    private final JButton btnConnection = new JButton("Probar conexion");
+    private final JTextArea txtResultsArea = new JTextArea(8, 40);
+
+    public VentanaPrincipal() {
         configurarVentana();
-        
+        configurarComponentes();
     }
 
-    private void configurarVentana(){
+    private void configurarVentana() {
+
         setTitle("DBConnections");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());        
-        setSize(600, 400);        
+        setSize(600, 400);
         setLocationRelativeTo(null);
+        setResizable(false);
     }
 
-    private JPanel crearPanelPrincipal() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        JPanel superior = new JPanel(new BorderLayout(0, 10));
-        superior.add(crearPanelFormulario(), BorderLayout.CENTER);
-        superior.add(crearPanelBoton(), BorderLayout.SOUTH);
-        panel.add(superior, BorderLayout.NORTH);
-        panel.add(crearPanelResultado(), BorderLayout.CENTER);
-        return panel;
-    }
+    private void configurarComponentes() {
 
+        // Configurar el formulario
+        panelFormulario.setBorder(
+            BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        );
 
-    private JPanel crearPanelFormulario() {
-        JPanel formulario = new JPanel(new GridLayout(3, 2, 8, 8));
-        formulario.add(crearEtiqueta("URL de conexión:", txtUrl));
-        formulario.add(txtUrl);
-        formulario.add(crearEtiqueta("Nombre de usuario:", txtuser));
-        formulario.add(txtuser);
-        formulario.add(crearEtiqueta("Contraseña:", txtPassword));
-        formulario.add(txtPassword);
+        panelFormulario.add(lblUrl);
+        panelFormulario.add(txtUrl);
 
-        txtUrl.setToolTipText("Ejemplo: jdbc:sqlite:inventario.db");
-        txtuser.setToolTipText("Dejar vacío si es SQLite");
-        txtPassword.setToolTipText("Dejar vacío si es SQLite");
-        return formulario;
-    }
+        panelFormulario.add(lblUser);
+        panelFormulario.add(txtUser);
 
-    private JLabel crearEtiqueta(String texto, JComponent campo) {
-        JLabel etiqueta = new JLabel(texto);
-        etiqueta.setLabelFor(campo);
-        return etiqueta;
-    }
+        panelFormulario.add(lblPassword);
+        panelFormulario.add(txtPassword);
 
-    private JPanel crearPanelBoton() {
-        JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        // El ActionListener contiene la lógica de prueba de conexión.
-        btnConnection.addActionListener(e -> Conectar());
-        getRootPane().setDefaultButton(btnConnection); // Enter también prueba la conexión
-        panelBoton.add(btnConnection);
-        return panelBoton;
-    }
-    private JScrollPane crearPanelResultado() {
+        // Configurar el area de resultados
         txtResultsArea.setEditable(false);
         txtResultsArea.setLineWrap(true);
         txtResultsArea.setWrapStyleWord(true);
-        txtResultsArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
 
-        JScrollPane scroll = new JScrollPane(txtResultsArea);
-        scroll.setBorder(BorderFactory.createTitledBorder("Resultado de la prueba"));
-        return scroll;
-    }
+        JScrollPane scrollResultados = new JScrollPane(txtResultsArea);
+        scrollResultados.setBorder(
+            BorderFactory.createTitledBorder("Resultados de conexion")
+        );
 
+        // Configurar boton
+        panelInferior.add(btnConnection);
 
-        
+        // Evento del boton de conexion
+        btnConnection.addActionListener(e -> probarConexion());
 
-        
+        // Agregar componentes al panel principal
+        panelPrincipal.setBorder(
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        );
 
-        panel.add(lblUrl);
-        panel.add(txtUrl);
+        panelPrincipal.add(panelFormulario, BorderLayout.NORTH);
+        panelPrincipal.add(scrollResultados, BorderLayout.CENTER);
+        panelPrincipal.add(panelInferior, BorderLayout.SOUTH);
 
-        panel.add(lblUser);
-        panel.add(txtuser);
-        panel.add(lblPassword);
-        panel.add(txtPassword);
-        panel.add(btnConnection);
-
-        add(panel);
+        add(panelPrincipal);
 
         setVisible(true);
+    }
+
+    // Metodo para probar la conexion
+    private void probarConexion() {
+
+        String url = txtUrl.getText().trim();
+        String usuario = txtUser.getText().trim();
+        String password = new String(txtPassword.getPassword());
+
+        try {
+
+            String resultado = ConexionBD.probarConexion(
+                url,
+                usuario,
+                password
+            );
+
+            txtResultsArea.setForeground(new Color(0, 128, 0));
+            txtResultsArea.setText(resultado);
+
+        } catch (ClassNotFoundException e) {
+
+            txtResultsArea.setForeground(Color.RED);
+            txtResultsArea.setText(
+                "ERROR: No se encontro el controlador JDBC.\n"
+                + e.getMessage()
+            );
+
+        } catch (java.sql.SQLException e) {
+
+            txtResultsArea.setForeground(Color.RED);
+            txtResultsArea.setText(
+                "FALLO DE CONEXION.\n"
+                + "Detalle tecnico: " + e.getMessage()
+            );
+
+        }
     }
 }
