@@ -4,22 +4,37 @@ import java.awt.*;
 
 public class VentanaPrincipal extends JFrame {
 
-    public VentanaPrincipal() {
-        setTitle("DBConnections");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
         Panel panel = new Panel();
-
         JLabel lblUrl = new JLabel("URL Conexion:");
-        JTextField txtUrl = new JTextField(15);
+        private final JTextField txtUrl = new JTextField(25);
         JLabel lblUser = new JLabel("Nombre de usuario");
-        JTextField txtuser = new JTextField(15);
+        private final JTextField txtuser = new JTextField(25);
         JLabel lblPassword = new JLabel("Nombre de usuario");
-        JTextField txtPassword = new JTextField(15);
+        private final JTextField txtPassword = new JTextField(15);    
+        private final JButton btnConnection = new JButton("Conectar");
+        private final JTextArea txtResultsArea=new JTextArea(8, 40);
+J
+    public VentanaPrincipal(){
+        configurarVentana();
+        
+    }
 
-        JButton btnConnection = new JButton("Conectar");
+    private void configurarVentana(){
+        setTitle("DBConnections");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());        
+        setSize(600, 400);        
+        setLocationRelativeTo(null);
+    }
+
+    
+
+
+        
+
+        
+
+        
 
         panel.add(lblUrl);
         panel.add(txtUrl);
